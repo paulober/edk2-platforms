@@ -1,5 +1,6 @@
 /** @file
  *
+ *  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
  *  Copyright (c) 2023, Mario Bălănică <mariobalanica02@gmail.com>
  *
  *  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -55,9 +56,13 @@ BoardRevisionGetModelFamily (
         return 3;
       case 0x11:          // Raspberry Pi 4 Model B
       case 0x13:          // Raspberry Pi 400
-      case 0x14:          // Raspberry Pi Computer Module 4
+      case 0x14:          // Raspberry Pi Compute Module 4
+      case 0x15:          // Raspberry Pi Compute Module 4S
         return 4;
       case 0x17:          // Raspberry Pi 5 Model B
+      case 0x18:          // Raspberry Pi Compute Module 5
+      case 0x19:          // Raspberry Pi 500
+      case 0x1a:          // Raspberry Pi Compute Module 5 Lite
         return 5;
     }
   }
@@ -106,6 +111,12 @@ BoardRevisionGetModelName (
         return "Raspberry Pi Compute Module 4";
       case 0x17:
         return "Raspberry Pi 5 Model B";
+        case 0x18:
+        return "Raspberry Pi Compute Module 5";
+      case 0x19:
+        return "Raspberry Pi 500";
+      case 0x1A:
+        return "Raspberry Pi Compute Module 5 Lite";
     }
   }
   return "Unknown Raspberry Pi Model";
