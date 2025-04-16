@@ -30,7 +30,7 @@
 [PcdsFixedAtBuild.common]
   #
   # Space reserved for config.txt-specced DTB follows right after the FD image
-  # in both RPi3 and RP4 implementations.
+  # in RPi3, RPi4 and RPi5 implementations.
   #
   gRaspberryPiTokenSpaceGuid.PcdFdtBaseAddress|0x001f0000|UINT32|0x00000001
   gRaspberryPiTokenSpaceGuid.PcdFirmwareBlockSize|0x0|UINT32|0x00000002

@@ -1,5 +1,6 @@
 ## @file
 #
+#  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
 #  Copyright (c) 2023-2024, Mario Bălănică <mariobalanica02@gmail.com>
 #  Copyright (c) 2011 - 2019, ARM Limited. All rights reserved.
 #  Copyright (c) 2017 - 2018, Andrei Warkentin <andrey.warkentin@gmail.com>
@@ -26,11 +27,11 @@
 
 [FD.RPI_EFI]
 BaseAddress   = 0x00000000|gArmTokenSpaceGuid.PcdFdBaseAddress
-Size          = 0x001f0000|gArmTokenSpaceGuid.PcdFdSize
+Size          = 0x00200000|gArmTokenSpaceGuid.PcdFdSize
 ErasePolarity = 1
 
 BlockSize     = 0x00001000|gRaspberryPiTokenSpaceGuid.PcdFirmwareBlockSize
-NumBlocks     = 0x1f0
+NumBlocks     = 0x200
 
 ################################################################################
 #
@@ -57,7 +58,7 @@ FILE = $(TFA_BUILD_BL31)
 #
 # UEFI image
 #
-0x00020000|0x001b0000
+0x00020000|0x001c0000
 gArmTokenSpaceGuid.PcdFvBaseAddress|gArmTokenSpaceGuid.PcdFvSize
 FV = FVMAIN_COMPACT
 
@@ -71,7 +72,7 @@ FV = FVMAIN_COMPACT
 #
 
 # NV_VARIABLE_STORE
-0x001d0000|0x0000e000
+0x001e0000|0x0000e000
 gRaspberryPiTokenSpaceGuid.PcdNvStorageVariableBase|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageVariableSize
 
 DATA = {
@@ -114,11 +115,11 @@ DATA = {
 }
 
 # NV_EVENT_LOG
-0x001de000|0x00001000
+0x001ee000|0x00001000
 gRaspberryPiTokenSpaceGuid.PcdNvStorageEventLogBase|gRaspberryPiTokenSpaceGuid.PcdNvStorageEventLogSize
 
 # NV_FTW_WORKING header
-0x001df000|0x00001000
+0x001ef000|0x00001000
 gRaspberryPiTokenSpaceGuid.PcdNvStorageFtwWorkingBase|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwWorkingSize
 
 DATA = {
@@ -133,14 +134,14 @@ DATA = {
 }
 
 # NV_FTW_WORKING data
-0x001e0000|0x00010000
+0x001f0000|0x00010000
 gRaspberryPiTokenSpaceGuid.PcdNvStorageFtwSpareBase|gEfiMdeModulePkgTokenSpaceGuid.PcdFlashNvStorageFtwSpareSize
 
 #
 # This is just for documentation purposes! The DTB reserved space is not part of the FD,
 # but this is exactly where it is expected to be.
 #
-# 0x001f0000|0x10000
+# 0x00200000|0x20000
 # gRaspberryPiTokenSpaceGuid.PcdFdtBaseAddress|gRaspberryPiTokenSpaceGuid.PcdFdtSize
 #
 
@@ -195,7 +196,7 @@ READ_LOCK_STATUS   = TRUE
   INF SecurityPkg/VariableAuthenticated/SecureBootDefaultKeysDxe/SecureBootDefaultKeysDxe.inf
 !endif
   INF MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
-  INF EmbeddedPkg/ResetRuntimeDxe/ResetRuntimeDxe.inf
+  INF MdeModulePkg/Universal/ResetSystemRuntimeDxe/ResetSystemRuntimeDxe.inf
   INF EmbeddedPkg/RealTimeClockRuntimeDxe/RealTimeClockRuntimeDxe.inf
   INF EmbeddedPkg/MetronomeDxe/MetronomeDxe.inf
   INF MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
@@ -212,7 +213,7 @@ READ_LOCK_STATUS   = TRUE
   INF Platform/RaspberryPi/Drivers/DisplayDxe/DisplayDxe.inf
   INF EmbeddedPkg/Drivers/ConsolePrefDxe/ConsolePrefDxe.inf
 
-  INF ArmPkg/Drivers/ArmGic/ArmGicDxe.inf
+  INF ArmPkg/Drivers/ArmGicDxe/ArmGicV2Dxe.inf
   INF Platform/RaspberryPi/Drivers/RpiFirmwareDxe/RpiFirmwareDxe.inf
   INF Platform/RaspberryPi/RPi5/Drivers/RpiPlatformDxe/RpiPlatformDxe.inf
   INF Platform/RaspberryPi/Drivers/FdtDxe/FdtDxe.inf
@@ -351,7 +352,7 @@ READ_STATUS        = TRUE
 READ_LOCK_CAP      = TRUE
 READ_LOCK_STATUS   = TRUE
 
-  INF ArmPlatformPkg/PrePi/PeiUniCore.inf
+  INF ArmPlatformPkg/PeilessSec/PeilessSec.inf
   FILE FV_IMAGE = 9E21FD93-9C72-4c15-8C4B-E77F1DB2D792 {
     SECTION GUIDED EE4E5898-3914-4259-9D6E-DC7BD79403CF PROCESSING_REQUIRED = TRUE {
       SECTION FV_IMAGE = FVMAIN

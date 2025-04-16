@@ -1394,7 +1394,7 @@ RpiFirmwareGetRtc (
   UINT32                       Result;
 
   if (!AcquireSpinLockOrFail (&mMailboxLock)) {
-    DEBUG ((DEBUG_ERROR, "%a: failed to acquire spinlock\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "%a: failed to acquire spinlock\n", __func__));
     return EFI_DEVICE_ERROR;
   }
 
@@ -1416,7 +1416,7 @@ RpiFirmwareGetRtc (
       Cmd->BufferHead.Response != RPI_MBOX_RESP_SUCCESS) {
     DEBUG ((DEBUG_ERROR,
       "%a: mailbox  transaction error: Status == %r, Response == 0x%x\n",
-      __FUNCTION__, Status, Cmd->BufferHead.Response));
+      __func__, Status, Cmd->BufferHead.Response));
     Status = EFI_DEVICE_ERROR;
   } else {
     *Value = Cmd->TagBody.Value;
@@ -1440,7 +1440,7 @@ RpiFirmwareSetRtc (
   UINT32                       Result;
 
   if (!AcquireSpinLockOrFail (&mMailboxLock)) {
-    DEBUG ((DEBUG_ERROR, "%a: failed to acquire spinlock\n", __FUNCTION__));
+    DEBUG ((DEBUG_ERROR, "%a: failed to acquire spinlock\n", __func__));
     return EFI_DEVICE_ERROR;
   }
 
@@ -1462,7 +1462,7 @@ RpiFirmwareSetRtc (
       Cmd->BufferHead.Response != RPI_MBOX_RESP_SUCCESS) {
     DEBUG ((DEBUG_ERROR,
       "%a: mailbox  transaction error: Status == %r, Response == 0x%x\n",
-      __FUNCTION__, Status, Cmd->BufferHead.Response));
+      __func__, Status, Cmd->BufferHead.Response));
     Status = EFI_DEVICE_ERROR;
   }
 
@@ -1579,7 +1579,7 @@ RpiFirmwareDxeInitialize (
                   EFI_MEMORY_UC | EFI_MEMORY_RUNTIME);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: AddMemorySpace failed. Status=%r\n",
-            __FUNCTION__, Status));
+            __func__, Status));
     goto UnmapBuffer;
   }
 
@@ -1589,7 +1589,7 @@ RpiFirmwareDxeInitialize (
                   EFI_MEMORY_UC | EFI_MEMORY_RUNTIME);
   if (EFI_ERROR (Status)) {
     DEBUG ((DEBUG_ERROR, "%a: SetMemorySpaceAttributes failed. Status=%r\n",
-            __FUNCTION__, Status));
+            __func__, Status));
     goto UnmapBuffer;
   }
 
