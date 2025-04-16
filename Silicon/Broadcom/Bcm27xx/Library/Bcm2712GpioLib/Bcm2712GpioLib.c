@@ -1,5 +1,6 @@
 /** @file
  *
+ *  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
  *  Copyright (c) 2023, Mario Bălănică <mariobalanica02@gmail.com>
  *
  *  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -26,6 +27,8 @@
 
 #define PINCTRL_REG_UNUSED                  MAX_UINT16
 
+#define BCM2712_SUN_TOP_CTRL_PROD_ID            0x1001504004ULL
+
 typedef struct {
   UINT16   MuxReg;
   UINT8    MuxBit;
@@ -41,126 +44,130 @@ typedef struct {
 } BCM2712_GPIO_CONTROLLER;
 
 STATIC BCM2712_PINCTRL_REGISTERS Bcm2712PinctrlGioRegisters[] = {
-  [0] = { .MuxReg = 0x0, .MuxBit = 0, .CtlReg = 0x1C, .CtlBit = 14 },
-  [1] = { .MuxReg = 0x0, .MuxBit = 4, .CtlReg = 0x1C, .CtlBit = 16 },
-  [2] = { .MuxReg = 0x0, .MuxBit = 8, .CtlReg = 0x1C, .CtlBit = 18 },
-  [3] = { .MuxReg = 0x0, .MuxBit = 12, .CtlReg = 0x1C, .CtlBit = 20 },
-  [4] = { .MuxReg = 0x0, .MuxBit = 16, .CtlReg = 0x1C, .CtlBit = 22 },
-  [5] = { .MuxReg = 0x0, .MuxBit = 20, .CtlReg = 0x1C, .CtlBit = 24 },
-  [6] = { .MuxReg = 0x0, .MuxBit = 24, .CtlReg = 0x1C, .CtlBit = 26 },
-  [7] = { .MuxReg = 0x0, .MuxBit = 28, .CtlReg = 0x1C, .CtlBit = 28 },
-  [8] = { .MuxReg = 0x4, .MuxBit = 0, .CtlReg = 0x20, .CtlBit = 0 },
-  [9] = { .MuxReg = 0x4, .MuxBit = 4, .CtlReg = 0x20, .CtlBit = 2 },
-  [10] = { .MuxReg = 0x4, .MuxBit = 8, .CtlReg = 0x20, .CtlBit = 4 },
-  [11] = { .MuxReg = 0x4, .MuxBit = 12, .CtlReg = 0x20, .CtlBit = 6 },
-  [12] = { .MuxReg = 0x4, .MuxBit = 16, .CtlReg = 0x20, .CtlBit = 8 },
-  [13] = { .MuxReg = 0x4, .MuxBit = 20, .CtlReg = 0x20, .CtlBit = 10 },
-  [14] = { .MuxReg = 0x4, .MuxBit = 24, .CtlReg = 0x20, .CtlBit = 12 },
-  [15] = { .MuxReg = 0x4, .MuxBit = 28, .CtlReg = 0x20, .CtlBit = 14 },
-  [16] = { .MuxReg = 0x8, .MuxBit = 0, .CtlReg = 0x20, .CtlBit = 16 },
-  [17] = { .MuxReg = 0x8, .MuxBit = 4, .CtlReg = 0x20, .CtlBit = 18 },
-  [18] = { .MuxReg = 0x8, .MuxBit = 8, .CtlReg = 0x20, .CtlBit = 20 },
-  [19] = { .MuxReg = 0x8, .MuxBit = 12, .CtlReg = 0x20, .CtlBit = 22 },
-  [20] = { .MuxReg = 0x8, .MuxBit = 16, .CtlReg = 0x20, .CtlBit = 24 },
-  [21] = { .MuxReg = 0x8, .MuxBit = 20, .CtlReg = 0x20, .CtlBit = 26 },
-  [22] = { .MuxReg = 0x8, .MuxBit = 24, .CtlReg = 0x20, .CtlBit = 28 },
-  [23] = { .MuxReg = 0x8, .MuxBit = 28, .CtlReg = 0x24, .CtlBit = 0 },
-  [24] = { .MuxReg = 0xC, .MuxBit = 0, .CtlReg = 0x24, .CtlBit = 2 },
-  [25] = { .MuxReg = 0xC, .MuxBit = 4, .CtlReg = 0x24, .CtlBit = 4 },
-  [26] = { .MuxReg = 0xC, .MuxBit = 8, .CtlReg = 0x24, .CtlBit = 6 },
-  [27] = { .MuxReg = 0xC, .MuxBit = 12, .CtlReg = 0x24, .CtlBit = 8 },
-  [28] = { .MuxReg = 0xC, .MuxBit = 16, .CtlReg = 0x24, .CtlBit = 10 },
-  [29] = { .MuxReg = 0xC, .MuxBit = 20, .CtlReg = 0x24, .CtlBit = 12 },
-  [30] = { .MuxReg = 0xC, .MuxBit = 24, .CtlReg = 0x24, .CtlBit = 14 },
-  [31] = { .MuxReg = 0xC, .MuxBit = 28, .CtlReg = 0x24, .CtlBit = 16 },
-  [32] = { .MuxReg = 0x10, .MuxBit = 0, .CtlReg = 0x24, .CtlBit = 18 },
-  [33] = { .MuxReg = 0x10, .MuxBit = 4, .CtlReg = 0x24, .CtlBit = 20 },
-  [34] = { .MuxReg = 0x10, .MuxBit = 8, .CtlReg = 0x24, .CtlBit = 22 },
-  [35] = { .MuxReg = 0x10, .MuxBit = 12, .CtlReg = 0x24, .CtlBit = 24 },
-  [36] = { .MuxReg = 0x10, .MuxBit = 16, .CtlReg = 0x24, .CtlBit = 26 },
-  [37] = { .MuxReg = 0x10, .MuxBit = 20, .CtlReg = 0x24, .CtlBit = 28 },
-  [38] = { .MuxReg = 0x10, .MuxBit = 24, .CtlReg = 0x28, .CtlBit = 0 },
-  [39] = { .MuxReg = 0x10, .MuxBit = 28, .CtlReg = 0x28, .CtlBit = 2 },
-  [40] = { .MuxReg = 0x14, .MuxBit = 0, .CtlReg = 0x28, .CtlBit = 4 },
-  [41] = { .MuxReg = 0x14, .MuxBit = 4, .CtlReg = 0x28, .CtlBit = 6 },
-  [42] = { .MuxReg = 0x14, .MuxBit = 8, .CtlReg = 0x28, .CtlBit = 8 },
-  [43] = { .MuxReg = 0x14, .MuxBit = 12, .CtlReg = 0x28, .CtlBit = 10 },
-  [44] = { .MuxReg = 0x14, .MuxBit = 16, .CtlReg = 0x28, .CtlBit = 12 },
-  [45] = { .MuxReg = 0x14, .MuxBit = 20, .CtlReg = 0x28, .CtlBit = 14 },
-  [46] = { .MuxReg = 0x14, .MuxBit = 24, .CtlReg = 0x28, .CtlBit = 16 },
-  [47] = { .MuxReg = 0x14, .MuxBit = 28, .CtlReg = 0x28, .CtlBit = 18 },
-  [48] = { .MuxReg = 0x18, .MuxBit = 0, .CtlReg = 0x28, .CtlBit = 20 },
-  [49] = { .MuxReg = 0x18, .MuxBit = 4, .CtlReg = 0x28, .CtlBit = 22 },
-  [50] = { .MuxReg = 0x18, .MuxBit = 8, .CtlReg = 0x28, .CtlBit = 24 },
-  [51] = { .MuxReg = 0x18, .MuxBit = 12, .CtlReg = 0x28, .CtlBit = 26 },
-  [52] = { .MuxReg = 0x18, .MuxBit = 16, .CtlReg = 0x28, .CtlBit = 28 },
-  [53] = { .MuxReg = 0x18, .MuxBit = 20, .CtlReg = 0x2C, .CtlBit = 0 },
-  [54] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 2 },
-  [55] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 4 },
-  [56] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 6 },
-  [57] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 8 },
-  [58] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 10 },
-  [59] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 12 },
-  [60] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 14 },
-  [61] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 16 },
-  [62] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 18 },
-  [63] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 20 },
-  [64] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x2C, .CtlBit = 22 },
+  // GPIO 0-4: BOOT
+  [0] = { .MuxReg = 0x00, .MuxBit = 0,  .CtlReg = 0x1C, .CtlBit = 14 }, // GPIO_000
+  [1] = { .MuxReg = 0x00, .MuxBit = 4,  .CtlReg = 0x1C, .CtlBit = 16 }, // 2712_BOOT_CS_N
+  [2] = { .MuxReg = 0x00, .MuxBit = 8,  .CtlReg = 0x1C, .CtlBit = 18 }, // 2712_BOOT_MISO
+  [3] = { .MuxReg = 0x00, .MuxBit = 12, .CtlReg = 0x1C, .CtlBit = 20 }, // 2712_BOOT_MOSI
+  [4] = { .MuxReg = 0x00, .MuxBit = 16, .CtlReg = 0x1C, .CtlBit = 22 }, // 2712_BOOT_SCLK
+
+  // GPIO 5–13: Unused
+  [5 ... 13] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
+
+  [14] = { .MuxReg = 0x04, .MuxBit = 24, .CtlReg = 0x20, .CtlBit = 12 }, // PCIE_SDA
+  [15] = { .MuxReg = 0x04, .MuxBit = 28, .CtlReg = 0x20, .CtlBit = 14 }, // PCIE_SCL
+
+  // GPIO 16–19: Unused
+  [16 ... 19] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
+
+  [20] = { .MuxReg = 0x08, .MuxBit = 16, .CtlReg = 0x20, .CtlBit = 24 }, // PWR_GPIO
+  [21] = { .MuxReg = 0x08, .MuxBit = 20, .CtlReg = 0x20, .CtlBit = 26 }, // 2712_G21_FS
+
+  // GPIO 22–23: Unused
+  [22 ... 23] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
+
+  // GPIO 24–29: Bluetooth / Wi-Fi control
+  [24] = { .MuxReg = 0x0C, .MuxBit = 0,  .CtlReg = 0x24, .CtlBit = 2 },  // BT_RTS
+  [25] = { .MuxReg = 0x0C, .MuxBit = 4,  .CtlReg = 0x24, .CtlBit = 4 },  // BT_CTS
+  [26] = { .MuxReg = 0x0C, .MuxBit = 8,  .CtlReg = 0x24, .CtlBit = 6 },  // BT_TXD
+  [27] = { .MuxReg = 0x0C, .MuxBit = 12, .CtlReg = 0x24, .CtlBit = 8 },  // BT_RXD
+  [28] = { .MuxReg = 0x0C, .MuxBit = 16, .CtlReg = 0x24, .CtlBit = 10 }, // WL_ON
+  [29] = { .MuxReg = 0x0C, .MuxBit = 20, .CtlReg = 0x24, .CtlBit = 12 }, // BT_ON
+
+  // GPIO 30–35: SDIO
+  [30] = { .MuxReg = 0x0C, .MuxBit = 24, .CtlReg = 0x24, .CtlBit = 14 }, // WIFI_SDIO_CLK
+  [31] = { .MuxReg = 0x0C, .MuxBit = 28, .CtlReg = 0x24, .CtlBit = 16 }, // WIFI_SDIO_CMD
+  [32] = { .MuxReg = 0x10, .MuxBit = 0,  .CtlReg = 0x24, .CtlBit = 18 }, // WIFI_SDIO_D0
+  [33] = { .MuxReg = 0x10, .MuxBit = 4,  .CtlReg = 0x24, .CtlBit = 20 }, // WIFI_SDIO_D1
+  [34] = { .MuxReg = 0x10, .MuxBit = 8,  .CtlReg = 0x24, .CtlBit = 22 }, // WIFI_SDIO_D2
+  [35] = { .MuxReg = 0x10, .MuxBit = 12, .CtlReg = 0x24, .CtlBit = 24 }, // WIFI_SDIO_D3
 };
 
 STATIC BCM2712_PINCTRL_REGISTERS Bcm2712PinctrlGioAonRegisters[] = {
-  [0] = { .MuxReg = 0xC, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 20 },
-  [1] = { .MuxReg = 0xC, .MuxBit = 4, .CtlReg = 0x18, .CtlBit = 22 },
-  [2] = { .MuxReg = 0xC, .MuxBit = 8, .CtlReg = 0x18, .CtlBit = 24 },
-  [3] = { .MuxReg = 0xC, .MuxBit = 12, .CtlReg = 0x18, .CtlBit = 26 },
-  [4] = { .MuxReg = 0xC, .MuxBit = 16, .CtlReg = 0x18, .CtlBit = 28 },
-  [5] = { .MuxReg = 0xC, .MuxBit = 20, .CtlReg = 0x1C, .CtlBit = 0 },
-  [6] = { .MuxReg = 0xC, .MuxBit = 24, .CtlReg = 0x1C, .CtlBit = 2 },
-  [7] = { .MuxReg = 0xC, .MuxBit = 28, .CtlReg = 0x1C, .CtlBit = 4 },
-  [8] = { .MuxReg = 0x10, .MuxBit = 0, .CtlReg = 0x1C, .CtlBit = 6 },
-  [9] = { .MuxReg = 0x10, .MuxBit = 4, .CtlReg = 0x1C, .CtlBit = 8 },
-  [10] = { .MuxReg = 0x10, .MuxBit = 8, .CtlReg = 0x1C, .CtlBit = 10 },
-  [11] = { .MuxReg = 0x10, .MuxBit = 12, .CtlReg = 0x1C, .CtlBit = 12 },
-  [12] = { .MuxReg = 0x10, .MuxBit = 16, .CtlReg = 0x1C, .CtlBit = 14 },
-  [13] = { .MuxReg = 0x10, .MuxBit = 20, .CtlReg = 0x1C, .CtlBit = 16 },
-  [14] = { .MuxReg = 0x10, .MuxBit = 24, .CtlReg = 0x1C, .CtlBit = 18 },
-  [15] = { .MuxReg = 0x10, .MuxBit = 28, .CtlReg = 0x1C, .CtlBit = 20 },
-  [16] = { .MuxReg = 0x14, .MuxBit = 0, .CtlReg = 0x1C, .CtlBit = 22 },
-  [17] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [18] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [19] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [20] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [21] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [22] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [23] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [24] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [25] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [26] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [27] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [28] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [29] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [30] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [31] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [32] = { .MuxReg = 0x0, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [33] = { .MuxReg = 0x0, .MuxBit = 4, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [34] = { .MuxReg = 0x0, .MuxBit = 8, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [35] = { .MuxReg = 0x0, .MuxBit = 12, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [36] = { .MuxReg = 0x4, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
-  [37] = { .MuxReg = 0x8, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
+  [0] = { .MuxReg = 0x00, .MuxBit = 0, .CtlReg = 0x1C, .CtlBit = 0 },  // GPIOAON_000
+  [1] = { .MuxReg = 0x00, .MuxBit = 4, .CtlReg = 0x1C, .CtlBit = 2 },  // GPIOAON_001
+  [2] = { .MuxReg = 0x00, .MuxBit = 8, .CtlReg = 0x1C, .CtlBit = 4 },  // GPIOAON_002
+  [3] = { .MuxReg = 0x00, .MuxBit = 12, .CtlReg = 0x1C, .CtlBit = 6 }, // GPIOAON_003
+  [4] = { .MuxReg = 0x00, .MuxBit = 16, .CtlReg = 0x1C, .CtlBit = 8 }, // GPIOAON_004
+  [5] = { .MuxReg = 0x00, .MuxBit = 20, .CtlReg = 0x1C, .CtlBit = 10 }, // GPIOAON_005 (SD_DET?)
+  [6] = { .MuxReg = 0x00, .MuxBit = 24, .CtlReg = 0x1C, .CtlBit = 12 }, // GPIOAON_006
+  [7] = { .MuxReg = 0x00, .MuxBit = 28, .CtlReg = 0x1C, .CtlBit = 14 }, // GPIOAON_007
+  [8] = { .MuxReg = 0x04, .MuxBit = 0,  .CtlReg = 0x20, .CtlBit = 0 },  // GPIOAON_008
+  [9] = { .MuxReg = 0x04, .MuxBit = 4,  .CtlReg = 0x20, .CtlBit = 2 },  // GPIOAON_009
+  [10] = { .MuxReg = 0x04, .MuxBit = 8,  .CtlReg = 0x20, .CtlBit = 4 },  // GPIOAON_010
+  [11] = { .MuxReg = 0x04, .MuxBit = 12, .CtlReg = 0x20, .CtlBit = 6 },  // GPIOAON_011
+  [12] = { .MuxReg = 0x04, .MuxBit = 16, .CtlReg = 0x20, .CtlBit = 8 },  // GPIOAON_012
+  [13] = { .MuxReg = 0x04, .MuxBit = 20, .CtlReg = 0x20, .CtlBit = 10 }, // GPIOAON_013
+  [14] = { .MuxReg = 0x04, .MuxBit = 24, .CtlReg = 0x20, .CtlBit = 12 }, // GPIOAON_014
+  [15] = { .MuxReg = 0x04, .MuxBit = 28, .CtlReg = 0x20, .CtlBit = 14 }, // GPIOAON_015
+  [16] = { .MuxReg = 0x08, .MuxBit = 0,  .CtlReg = 0x24, .CtlBit = 0 },  // GPIOAON_016
 };
 
-STATIC BCM2712_GPIO_CONTROLLER Controllers[BCM2712_GIO_COUNT] = {
-  {
-    .GioBase            = BCM2712_BRCMSTB_GIO_BASE,
-    .PinctrlBase        = BCM2712_PINCTRL_BASE,
-    .PinctrlRegisters   = Bcm2712PinctrlGioRegisters,
-    .PinCount           = ARRAY_SIZE (Bcm2712PinctrlGioRegisters)
-  }, {
-    .GioBase            = BCM2712_BRCMSTB_GIO_AON_BASE,
-    .PinctrlBase        = BCM2712_PINCTRL_AON_BASE,
-    .PinctrlRegisters   = Bcm2712PinctrlGioAonRegisters,
-    .PinCount           = ARRAY_SIZE (Bcm2712PinctrlGioAonRegisters)
-  }
+STATIC BCM2712_PINCTRL_REGISTERS Bcm2712D0PinctrlGioRegisters[] = {
+  [0] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
+  [1] = { .MuxReg = 0x00, .MuxBit = 0, .CtlReg = 0x10, .CtlBit = 5 },
+  [2] = { .MuxReg = 0x00, .MuxBit = 4, .CtlReg = 0x10, .CtlBit = 6 },
+  [3] = { .MuxReg = 0x00, .MuxBit = 8, .CtlReg = 0x10, .CtlBit = 7 },
+  [4] = { .MuxReg = 0x00, .MuxBit = 12, .CtlReg = 0x10, .CtlBit = 8 },
+  
+  // GPIO 5–9: Unused
+  [5 ... 9] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
+
+  [10] = { .MuxReg = 0x00, .MuxBit = 16, .CtlReg = 0x10, .CtlBit = 9 },
+  [11] = { .MuxReg = 0x00, .MuxBit = 20, .CtlReg = 0x10, .CtlBit = 10 },
+  [12] = { .MuxReg = 0x00, .MuxBit = 24, .CtlReg = 0x10, .CtlBit = 11 },
+  [13] = { .MuxReg = 0x00, .MuxBit = 28, .CtlReg = 0x10, .CtlBit = 12 },
+  [14] = { .MuxReg = 0x04, .MuxBit = 0,  .CtlReg = 0x10, .CtlBit = 13 },
+  [15] = { .MuxReg = 0x04, .MuxBit = 4,  .CtlReg = 0x10, .CtlBit = 14 },
+
+  // GPIO 16-17 unused
+  [16] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
+  [17] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = PINCTRL_REG_UNUSED, .CtlBit = 0 },
+
+  [18] = { .MuxReg = 0x04, .MuxBit = 8,  .CtlReg = 0x14, .CtlBit = 0 },
+  [19] = { .MuxReg = 0x04, .MuxBit = 12, .CtlReg = 0x14, .CtlBit = 1 },
+  [20] = { .MuxReg = 0x04, .MuxBit = 16, .CtlReg = 0x14, .CtlBit = 2 },
+  [21] = { .MuxReg = 0x04, .MuxBit = 20, .CtlReg = 0x14, .CtlBit = 3 },
+  [22] = { .MuxReg = 0x04, .MuxBit = 24, .CtlReg = 0x14, .CtlBit = 4 },
+  [23] = { .MuxReg = 0x04, .MuxBit = 28, .CtlReg = 0x14, .CtlBit = 5 },
+  [24] = { .MuxReg = 0x08, .MuxBit = 0,  .CtlReg = 0x14, .CtlBit = 6 },
+  [25] = { .MuxReg = 0x08, .MuxBit = 4,  .CtlReg = 0x14, .CtlBit = 7 },
+  [26] = { .MuxReg = 0x08, .MuxBit = 8,  .CtlReg = 0x14, .CtlBit = 8 },
+  [27] = { .MuxReg = 0x08, .MuxBit = 12, .CtlReg = 0x14, .CtlBit = 9 },
+  [28] = { .MuxReg = 0x08, .MuxBit = 16, .CtlReg = 0x14, .CtlBit = 10 },
+  [29] = { .MuxReg = 0x08, .MuxBit = 20, .CtlReg = 0x14, .CtlBit = 11 },
+  [30] = { .MuxReg = 0x08, .MuxBit = 24, .CtlReg = 0x14, .CtlBit = 12 },
+  [31] = { .MuxReg = 0x08, .MuxBit = 28, .CtlReg = 0x14, .CtlBit = 13 },
+  [32] = { .MuxReg = 0x0C, .MuxBit = 0,  .CtlReg = 0x14, .CtlBit = 14 },
+  [33] = { .MuxReg = 0x0C, .MuxBit = 4,  .CtlReg = 0x18, .CtlBit = 0 },
+  [34] = { .MuxReg = 0x0C, .MuxBit = 8,  .CtlReg = 0x18, .CtlBit = 1 },
+  [35] = { .MuxReg = 0x0C, .MuxBit = 12, .CtlReg = 0x18, .CtlBit = 2 },
+  [36] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 3 },
+  [37] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 4 },
+  [38] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 5 },
+  [39] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 6 },
+  [40] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 7 },
+  [41] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 8 },
+  [42] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 9 },
+  [43] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 10 },
+  [44] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 11 },
+  [45] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 12 },
+  [46] = { .MuxReg = PINCTRL_REG_UNUSED, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 13 },
+};
+
+STATIC BCM2712_PINCTRL_REGISTERS Bcm2712D0PinctrlGioAonRegisters[] = {
+  [0] = { .MuxReg = 0x0C, .MuxBit = 0, .CtlReg = 0x14, .CtlBit = 9 },
+  [1] = { .MuxReg = 0x0C, .MuxBit = 4, .CtlReg = 0x14, .CtlBit = 10 },
+  [2] = { .MuxReg = 0x0C, .MuxBit = 8, .CtlReg = 0x14, .CtlBit = 11 },
+  [3] = { .MuxReg = 0x0C, .MuxBit = 12, .CtlReg = 0x14, .CtlBit = 12 },
+  [4] = { .MuxReg = 0x0C, .MuxBit = 16, .CtlReg = 0x14, .CtlBit = 13 },
+  [5] = { .MuxReg = 0x0C, .MuxBit = 20, .CtlReg = 0x14, .CtlBit = 14 },
+  [6] = { .MuxReg = 0x0C, .MuxBit = 24, .CtlReg = 0x18, .CtlBit = 0 },
+  [8] = { .MuxReg = 0x0C, .MuxBit = 28, .CtlReg = 0x18, .CtlBit = 1 },
+  [9] = { .MuxReg = 0x10, .MuxBit = 0, .CtlReg = 0x18, .CtlBit = 2 },
+  [12] = { .MuxReg = 0x10, .MuxBit = 4, .CtlReg = 0x18, .CtlBit = 3 },
+  [13] = { .MuxReg = 0x10, .MuxBit = 8, .CtlReg = 0x18, .CtlBit = 4 },
+  [14] = { .MuxReg = 0x10, .MuxBit = 12, .CtlReg = 0x18, .CtlBit = 5 },
 };
 
 #define GPIOLIB_ASSERT_OR_FAIL(Expression, FailAction) \
@@ -176,6 +183,48 @@ STATIC BCM2712_GPIO_CONTROLLER Controllers[BCM2712_GIO_COUNT] = {
                           && (Pin < Controllers[Type].PinCount), \
                           FailAction)
 
+
+STATIC BOOLEAN                  GpioInitialized = FALSE;
+STATIC BOOLEAN                  IsD0Revision = FALSE;
+STATIC BCM2712_GPIO_CONTROLLER  Controllers[BCM2712_GIO_COUNT];
+
+STATIC VOID
+InitializeGpioIfNeeded (
+  VOID
+  )
+{
+  if (GpioInitialized) {
+    return;
+  }
+
+  UINT32 SocRev   = MmioRead32 ((UINTN)BCM2712_SUN_TOP_CTRL_PROD_ID);
+  UINT8  MajorRev = (SocRev >> 4) & 0xF; // bits [7:4]
+
+  IsD0Revision = MajorRev == 3;
+
+  DEBUG ((DEBUG_INFO, "GPIO: Detected BCM2712 with major revision %u variant\n", MajorRev));
+
+  Controllers[0].GioBase = BCM2712_BRCMSTB_GIO_BASE;
+  Controllers[0].PinctrlBase = BCM2712_PINCTRL_BASE;
+  Controllers[0].PinctrlRegisters = IsD0Revision 
+    ? Bcm2712D0PinctrlGioRegisters 
+    : Bcm2712PinctrlGioRegisters;
+  Controllers[0].PinCount = IsD0Revision
+    ? ARRAY_SIZE (Bcm2712D0PinctrlGioRegisters)
+    : ARRAY_SIZE (Bcm2712PinctrlGioRegisters);
+
+  Controllers[1].GioBase = BCM2712_BRCMSTB_GIO_AON_BASE;
+  Controllers[1].PinctrlBase = BCM2712_PINCTRL_AON_BASE;
+  Controllers[1].PinctrlRegisters = IsD0Revision 
+    ? Bcm2712D0PinctrlGioAonRegisters 
+    : Bcm2712PinctrlGioAonRegisters;
+  Controllers[1].PinCount = IsD0Revision
+    ? ARRAY_SIZE (Bcm2712D0PinctrlGioAonRegisters)
+    : ARRAY_SIZE (Bcm2712PinctrlGioAonRegisters);
+
+  GpioInitialized = TRUE;
+}
+
 UINT8
 EFIAPI
 GpioGetFunction (
@@ -187,6 +236,9 @@ GpioGetFunction (
   BCM2712_PINCTRL_REGISTERS   *Regs;
   UINT32                      Value = BCM2712_GPIO_ALT_COUNT;
 
+  DEBUG ((DEBUG_INFO, "GpioGetFunction: Type %d Pin %d\n", Type, Pin));
+
+  InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return Value);
 
   Controller = &Controllers[Type];
@@ -210,6 +262,9 @@ GpioSetFunction (
   BCM2712_GPIO_CONTROLLER     *Controller;
   BCM2712_PINCTRL_REGISTERS   *Regs;
 
+  DEBUG((DEBUG_INFO, "GpioSetFunction: Type %d Pin %d Function %d\n", Type, Pin, Function));
+
+  InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);
 
   Controller = &Controllers[Type];
@@ -233,6 +288,9 @@ GpioGetPull (
   BCM2712_PINCTRL_REGISTERS   *Regs;
   UINT32                      Value = BCM2712_GPIO_PIN_PULL_NONE;
 
+  DEBUG ((DEBUG_INFO, "GpioGetPull: Type %d Pin %d\n", Type, Pin));
+
+  InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return Value);
 
   Controller = &Controllers[Type];
@@ -256,6 +314,9 @@ GpioSetPull (
   BCM2712_GPIO_CONTROLLER     *Controller;
   BCM2712_PINCTRL_REGISTERS   *Regs;
 
+  DEBUG ((DEBUG_INFO, "GpioSetPull: Type %d Pin %d Pull %d\n", Type, Pin, Pull));
+
+  InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);
 
   Controller = &Controllers[Type];
@@ -284,6 +345,9 @@ GpioRead (
   EFI_PHYSICAL_ADDRESS        BankReg;
   UINT32                      Value = FALSE;
 
+  DEBUG ((DEBUG_INFO, "GpioRead: Type %d Pin %d\n", Type, Pin));
+
+  InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return Value);
 
   Controller = &Controllers[Type];
@@ -305,6 +369,9 @@ GpioWrite (
   BCM2712_GPIO_CONTROLLER     *Controller;
   EFI_PHYSICAL_ADDRESS        BankReg;
 
+  DEBUG ((DEBUG_INFO, "GpioWrite: Type %d Pin %d Value %d\n", Type, Pin, Value));
+
+  InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);
 
   Controller = &Controllers[Type];
@@ -328,6 +395,9 @@ GpioGetDirection (
   EFI_PHYSICAL_ADDRESS        BankReg;
   UINT32                      Value = BCM2712_GPIO_PIN_OUTPUT;
 
+  DEBUG ((DEBUG_INFO, "GpioGetDirection: Type %d Pin %d\n", Type, Pin));
+
+  InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return Value);
 
   Controller = &Controllers[Type];
@@ -353,8 +423,10 @@ GpioSetDirection (
   BCM2712_GPIO_CONTROLLER     *Controller;
   EFI_PHYSICAL_ADDRESS        BankReg;
 
-  GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);
+  DEBUG ((DEBUG_INFO, "GpioSetDirection: Type %d Pin %d Direction %d\n", Type, Pin, Direction));
 
+  InitializeGpioIfNeeded ();
+  GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);
   GPIOLIB_ASSERT_OR_FAIL (Direction != BCM2712_GPIO_PIN_OUTPUT
                           || Direction != BCM2712_GPIO_PIN_INPUT,
                           return);
