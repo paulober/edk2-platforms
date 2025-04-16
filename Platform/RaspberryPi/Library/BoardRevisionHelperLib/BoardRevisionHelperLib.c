@@ -8,6 +8,9 @@
  **/
 
 #include <Uefi.h>
+#include <Library/BaseLib.h>
+#include <Library/BoardInfoLib.h>
+
 #include <Library/BoardRevisionHelperLib.h>
 
 //
@@ -152,6 +155,9 @@ BoardRevisionGetProcessorName (
   IN  UINT32  RevisionCode
   )
 {
+  EFI_STATUS  Status;
+  CONST CHAR8 *PinctrlCompat;
+
   if (RevisionCode != 0) {
     switch (RPI_PROCESSOR (RevisionCode)) {
       case 0x00:
@@ -163,7 +169,19 @@ BoardRevisionGetProcessorName (
       case 0x03:
         return "BCM2711 (Arm Cortex-A72)";
       case 0x04:
-        return "BCM2712 (Arm Cortex-A76)";
+        Status = BoardInfoGetPinctrl (&PinctrlCompat);
+        if (EFI_ERROR (Status)) {
+          goto ret_bcm2712_default;
+        }
+
+        if (AsciiStrCmp (PinctrlCompat, "brcm,bcm2712d0-pinctrl") == 0) {
+          return "BCM2712D0 (Arm Cortex-A76)";
+        } else if (AsciiStrCmp (PinctrlCompat, "brcm,bcm2712-pinctrl") == 0) {
+          return "BCM2712C1 (Arm Cortex-A76)";
+        } else {
+ret_bcm2712_default:
+          return "BCM2712 (Arm Cortex-A76)";
+        }
     }
   }
   return "Unknown CPU Model";
