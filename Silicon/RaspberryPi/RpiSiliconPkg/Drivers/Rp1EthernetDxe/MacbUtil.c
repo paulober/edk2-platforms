@@ -421,6 +421,9 @@ MacbCheckLink (
   return EFI_NOT_READY;
 }
 
+#define MACB_LINK_TIMEOUT_US  3000000  // 3 seconds
+#define MACB_LINK_RETRY_DELAY_US 500   // 0.5 ms
+
 EFI_STATUS
 EFIAPI
 MacbWaitForLink (
@@ -432,12 +435,15 @@ MacbWaitForLink (
   EFI_STATUS Status;
   GENERIC_PHY_SPEED Speed;
   GENERIC_PHY_DUPLEX Duplex;
+  UINTN ElapsedTime;
+
+  ElapsedTime = 0;
 
   LinkReadyMask = GENERIC_PHY_BMSR_ANEG_COMPLETE | GENERIC_PHY_BMSR_LINK_STATUS;
 
   // TODO: not wait for ever!
   // Wait for link to be established
-  do {
+  while (ElapsedTime < MACB_LINK_TIMEOUT_US) {
     Status = MacbMdioRead (Macb, GENERIC_PHY_BMSR, &MiiStatus);
     ASSERT_EFI_ERROR (Status);
 
@@ -484,12 +490,15 @@ MacbWaitForLink (
           (Duplex == PHY_DUPLEX_FULL) ? "full" : "half"));
         MacbPhyConfigure (Macb, Speed, Duplex);
         return EFI_SUCCESS;
-      } else {
-        gBS->Stall (500); // 500us
       }
     }
-  } while (TRUE);
 
+    gBS->Stall (500); // 500us
+    ElapsedTime += MACB_LINK_RETRY_DELAY_US;
+  }
+
+  DEBUG ((DEBUG_ERROR, "MACB: Link not established after %u ms\n",
+    ElapsedTime / 1000));
   return EFI_NOT_READY;
 }
 
@@ -750,7 +759,6 @@ MacbGemConfigureDma (
   DmaCfg = GEM_BFINS (FBLDO, MACB_DMA_BURST_LEN, DmaCfg);
 
   MacbMmioWrite (Macb, GEM_DMACFG, DmaCfg);
-  DEBUG ((DEBUG_INFO, "MACB: Configured DMA = 0x%08x\n", DmaCfg));
   (void) MacbMmioRead (Macb, GEM_DMACFG); // Serialise the write
 }
 
