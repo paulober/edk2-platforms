@@ -1,5 +1,6 @@
 /** @file
  *
+ *  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
  *  Copyright (c) 2023, Mario Bălănică <mariobalanica02@gmail.com>
  *
  *  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -21,9 +22,9 @@
   MI ## Index = PBAR + Offset                                   \
   MA ## Index = MI ## Index + LE ## Index - 1
 
-#define RP1_INTERRUPT_BUF(Index)                                \
+#define RP1_INTERRUPT_BUF(Index)                          \
   Interrupt (ResourceConsumer, Level, ActiveHigh, Shared,,,     \
-             RB ## Index) { 0 }                                 \
+             RB ## Index) { 0 }
 
 #define RP1_INTERRUPT_SET(Index)                                \
   CreateDwordField (RBUF, RB ## Index._INT, IN ## Index)        \
@@ -57,4 +58,110 @@ Device (XHC1) {
     RP1_INTERRUPT_SET (01)
     Return (RBUF)
   }
+}
+
+Device (GPIO)
+{
+  Name (_HID, "RPIL002")
+  // Generic GPIO id for compatibility
+  Name (_CID, "PNP0C40")
+  Name (_UID, 0x0)
+  // Name (_CCA, 0x0) already inherited from the parent device (RP1)
+
+  Method (_CRS, 0, Serialized)
+  {
+    Name (RBUF, ResourceTemplate ()
+    {
+      RP1_QWORDMEMORY_BUF (00)
+      RP1_QWORDMEMORY_BUF (01)
+      RP1_QWORDMEMORY_BUF (02)
+
+      RP1_INTERRUPT_BUF (03)
+    })
+
+    RP1_QWORDMEMORY_SET (00, RP1_IO_BANK0_BASE, RP1_GPIO_REGION_SIZE)
+    RP1_QWORDMEMORY_SET (01, RP1_SYS_RIO0_BASE, RP1_GPIO_REGION_SIZE)
+    RP1_QWORDMEMORY_SET (02, RP1_PADS_BANK0_BASE, RP1_GPIO_REGION_SIZE)
+
+    // Only GSI261 because ACPI has no built-in support for MSI-X vector indexing
+    RP1_INTERRUPT_SET (03)
+
+    Return (RBUF)
+  }
+
+  // No _STA => 0xF (always on) assumed by default
+  // but to be explicit, we can add it here:
+  Method (_STA)
+  {
+    Return (0xF) // always present and functional
+  }
+
+  // Device-Specific Data for Linux compatibility
+  Name (_DSD, Package ()
+  {
+    // Device Properties UUID
+    ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+    Package ()
+    {
+      Package () { "compatible", "raspberrypi,rp1-gpio" },
+      Package () { "gpio-controller", One },
+      Package () { "#gpio-cells", 2 },
+      Package () { "interrupt-controller", One },
+      Package () { "#interrupt-cells", 2 },
+      Package () { "gpio-ranges", Package () { \_SB.RP1B.GPIO, 0, 0, 54 } }
+    }
+  })
+}
+
+Device (ETH0)
+{
+    Name (_HID, "RPIL003")
+    Name (_UID, 0)
+    // _CCA is inherited from the parent device (RP1)
+    // No _STA => 0xF (always on) assumed by default
+    // but to be explicit, we can add it here:
+    Method (_STA)
+    {
+      Return (0xf)
+    }
+
+    Name (PINT, RP1_INT_ETH)
+
+    // Register resource
+    Method (_CRS, 0, Serialized)
+    {
+      Name (RBUF, ResourceTemplate () {
+        RP1_QWORDMEMORY_BUF (00)
+        RP1_INTERRUPT_BUF (01)
+      })
+      RP1_QWORDMEMORY_SET (00, RP1_ETH_BASE, RP1_ETH_SIZE)
+      // GSI261 because ACPI has no built-in support for MSI-X vector indexing
+      RP1_INTERRUPT_SET (01)
+      Return (RBUF)
+    }
+
+    // Optional _DSD for Linux compatibility
+    Name (_DSD, Package ()
+    {
+      // Device properties UUID
+      ToUUID ("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+      Package ()
+      {
+        Package () 
+        { 
+          "compatible", 
+          Package ()
+          {
+            "raspberrypi,rp1-gem",
+            "cdns,macb"
+          }
+        },
+        Package () { "phy-mode", "rgmii-id" },
+        // TODO: maybe add and patch at runtime
+        //Package () { "local-mac-address", Buffer() { 0x00,0x00,0x00,0x00,0x00,0x00 } },
+        Package () { "cdns,aw2w-max-pipe", 8 },
+        Package () { "cdns,ar2r-max-pipe", 8 },
+        Package () { "cdns,use-aw2b-fill", 1 },
+      }
+    })
 }

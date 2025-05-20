@@ -28,4 +28,10 @@ BoardInfoGetPinctrl (
   OUT CONST CHAR8 **Pinctrl
   );
 
+EFI_STATUS
+EFIAPI
+GetEthernetMacAddress (
+  OUT UINT8 *MacAddress
+  );
+
 #endif /* __BOARD_INFO_LIB_H__ */

@@ -2,6 +2,7 @@
  *
  *  Differentiated System Definition Table (DSDT)
  *
+ *  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
  *  Copyright (c) 2023-2024, Mario Bălănică <mariobalanica02@gmail.com>
  *
  *  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -183,7 +184,9 @@ DefinitionBlock ("Dsdt.aml", "DSDT", 2, "RPIFDN", "RPI5    ", 2)
     // RP1 I/O Bridge
     //
     Device (RP1B) {
-      Name (_HID, "ACPI0004")
+      Name (_HID, "RPIL0001")
+      // Optional fallback for generic bus match
+      Name (_CID, "ACPI0004")
       Name (_UID, 0x1)
 
       // Parent bus is non-coherent

@@ -10,6 +10,7 @@
 #include <Uefi.h>
 #include <Library/BoardInfoLib.h>
 #include <Library/FdtPlatformLib.h>
+#include <Library/DebugLib.h>
 #include <libfdt.h>
 
 EFI_STATUS
@@ -123,6 +124,51 @@ BoardInfoGetPinctrl (
   }
 
   *Pinctrl = (CHAR8 *) Compat;
+
+  return EFI_SUCCESS;
+}
+
+
+/**
+ * @brief Get the Mac Address of the ethernet node.
+ * 
+ * @param MacAddress[out] Pointer to the buffer to store the MAC address.
+ *                        The buffer must be at least 6 bytes long.
+ */
+EFI_STATUS
+EFIAPI
+GetEthernetMacAddress (
+  OUT UINT8 *MacAddress
+  )
+{
+  EFI_STATUS    Status;
+  VOID          *Fdt;
+  INT32         Size;
+  INTN          Node;
+  CONST VOID    *Mac;
+
+  if (MacAddress == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Fdt = FdtPlatformGetBase ();
+  if (Fdt == NULL) {
+    return EFI_NOT_FOUND;
+  }
+
+  Node = fdt_path_offset (Fdt, "ethernet0");
+  if (Node < 0) {
+    DEBUG ((DEBUG_ERROR, "%a: failed to locate 'ethernet0' alias\n", __func__));
+    return EFI_NOT_FOUND;
+  }
+
+  Mac = fdt_getprop (Fdt, Node, "local-mac-address", &Size);
+  if (EFI_ERROR (Status) || Size != 6) {
+    DEBUG ((DEBUG_ERROR, "%a: failed to locate 'local-mac-address' property\n", __func__));
+    return EFI_NOT_FOUND;
+  }
+
+  CopyMem (MacAddress, Mac, 6);
 
   return EFI_SUCCESS;
 }

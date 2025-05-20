@@ -161,6 +161,9 @@
   # USB Libraries
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
 
+  # RP1 Libraries
+  Rp1ClocksLib|Silicon/RaspberryPi/RpiSiliconPkg/Library/Rp1ClocksLib/Rp1ClocksLib.inf
+
   #
   # Secure Boot dependencies
   #
@@ -394,14 +397,14 @@
   # Size of the region used by UEFI in permanent memory (Reserved 64MB)
   gArmPlatformTokenSpaceGuid.PcdSystemMemoryUefiRegionSize|0x04000000
   #
-  # 0x00000000 - 0x00200000  FD (PcdFdBaseAddress, PcdFdSize)
-  # 0x00200000 - 0x00220000 DTB (PcdFdtBaseAddress, PcdFdtSize)
-  # 0x00220000 - ...        RAM (PcdSystemMemoryBase, PcdSystemMemorySize)
+  # 0x00000000 - 0x00240000  FD (PcdFdBaseAddress, PcdFdSize)
+  # 0x00240000 - 0x00260000 DTB (PcdFdtBaseAddress, PcdFdtSize)
+  # 0x00260000 - ...        RAM (PcdSystemMemoryBase, PcdSystemMemorySize)
   #
-  gArmTokenSpaceGuid.PcdSystemMemoryBase|0x00220000
-  gArmTokenSpaceGuid.PcdSystemMemorySize|0x3fde0000
+  gArmTokenSpaceGuid.PcdSystemMemoryBase|0x00260000
+  gArmTokenSpaceGuid.PcdSystemMemorySize|0x3fda0000
 
-  gRaspberryPiTokenSpaceGuid.PcdFdtBaseAddress|0x00200000
+  gRaspberryPiTokenSpaceGuid.PcdFdtBaseAddress|0x00240000
   gRaspberryPiTokenSpaceGuid.PcdFdtSize|0x20000
 
   gEmbeddedTokenSpaceGuid.PcdPrePiCpuIoSize|40
@@ -650,6 +653,11 @@
   # Networking stack
   #
 !include NetworkPkg/Network.dsc.inc
+  Silicon/RaspberryPi/RpiSiliconPkg/Drivers/Rp1EthernetDxe/Rp1EthernetDxe.inf {
+    <PcdsFixedAtBuild>
+      gEmbeddedTokenSpaceGuid.PcdDmaDeviceOffset|0x00000000
+      gEmbeddedTokenSpaceGuid.PcdDmaDeviceLimit|0xffffffffff
+  }
 
   #
   # RNG
@@ -679,6 +687,7 @@
   # RP1 I/O bridge
   #
   Silicon/RaspberryPi/RpiSiliconPkg/Drivers/Rp1BusDxe/Rp1BusDxe.inf
+  Silicon/RaspberryPi/RpiSiliconPkg/Drivers/Rp1GpioDxe/Rp1GpioDxe.inf
 
   #
   # NVMe boot devices

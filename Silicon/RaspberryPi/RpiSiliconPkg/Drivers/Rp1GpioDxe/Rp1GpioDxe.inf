@@ -1,0 +1,40 @@
+#/** @file
+#
+#  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x0001001A
+  BASE_NAME                      = Rp1GpioDxe
+  FILE_GUID                      = ef837327-a1f5-462b-8e2a-9781804f347a
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = Rp1GpioDxeEntryPoint
+
+[Sources]
+  Rp1GpioDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  Silicon/RaspberryPi/RpiSiliconPkg/RpiSiliconPkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  DebugLib
+  IoLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+
+[Protocols]
+  gEfiDevicePathProtocolGuid
+  gRp1GpioDeviceProtocolGuid
+  gRp1GpioProtocolGuid
+
+[Depex]
+  gRp1GpioDeviceProtocolGuid

@@ -1,5 +1,6 @@
 #/** @file
 #
+#  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
 #  Copyright (c) 2023-2024, Mario Bălănică <mariobalanica02@gmail.com>
 #
 #  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -11,7 +12,7 @@
   BASE_NAME                      = Rp1BusDxe
   FILE_GUID                      = 7d4843f2-f474-40b1-87de-4d67fad8b00f
   MODULE_TYPE                    = DXE_DRIVER
-  VERSION_STRING                 = 1.0
+  VERSION_STRING                 = 2.0
   ENTRY_POINT                    = Rp1BusDxeEntryPoint
 
 [Sources]
@@ -21,12 +22,16 @@
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
+  NetworkPkg/NetworkPkg.dec
+  Platform/RaspberryPi/RaspberryPi.dec
   Silicon/RaspberryPi/RpiSiliconPkg/RpiSiliconPkg.dec
 
 [LibraryClasses]
+  BoardInfoLib
   DebugLib
   IoLib
   MemoryAllocationLib
+  NetLib
   NonDiscoverableDeviceRegistrationLib
   UefiBootServicesTableLib
   UefiDriverEntryPoint
@@ -37,6 +42,9 @@
   gRp1BusProtocolGuid                           ## BY_START
   gEdkiiNonDiscoverableDeviceProtocolGuid       ## BY_START
   gEfiDevicePathProtocolGuid                    ## BY_START
+  gRp1GpioDeviceProtocolGuid                    ## PRODUCES
+  gRp1EthernetPlatformDeviceProtocolGuid        ## PRODUCES
+  gRaspberryPiFirmwareProtocolGuid              ## CONSUMES
 
 [Depex]
-  TRUE
+  gRaspberryPiFirmwareProtocolGuid

@@ -1,5 +1,6 @@
 /** @file
  *
+ *  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
  *  Copyright (c) 2023-2024, Mario Bălănică <mariobalanica02@gmail.com>
  *
  *  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -8,15 +9,65 @@
 
 #include <Uefi.h>
 #include <IndustryStandard/Pci.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/BoardInfoLib.h>
 #include <Library/DebugLib.h>
+#include <Library/DevicePathLib.h>
 #include <Library/IoLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/NetLib.h>
 #include <Library/NonDiscoverableDeviceRegistrationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
 #include <Rp1.h>
+#include <Protocol/Rp1GpioDevice.h>
+#include <Protocol/Rp1EthernetPlatformDevice.h>
+#include <Protocol/RpiFirmware.h>
 
 #include "Rp1BusDxe.h"
+
+#pragma pack(1)
+typedef struct {
+  MAC_ADDR_DEVICE_PATH MacAddrP;
+  EFI_DEVICE_PATH_PROTOCOL End;
+} RP1_ETH_DEVICE_PATH;
+
+typedef struct {
+  RP1_ETH_DEVICE_PATH                   DevicePath;
+  RP1_ETHERNET_PLATFORM_DEVICE_PROTOCOL PlatformDevice;
+} RP1_ETH_DEVICE;
+#pragma pack()
+
+STATIC RASPBERRY_PI_FIRMWARE_PROTOCOL   *mFwProtocol;
+
+STATIC RP1_ETH_DEVICE mRp1EthDevice = {
+  {
+    .MacAddrP = {
+      .Header = {
+        .Type = MESSAGING_DEVICE_PATH,
+        .SubType = MSG_MAC_ADDR_DP,
+        .Length = {
+          (UINT8)(sizeof (MAC_ADDR_DEVICE_PATH)),
+          (UINT8)((sizeof (MAC_ADDR_DEVICE_PATH)) >> 8)
+        }
+      },
+      .MacAddress = { {0} },
+      .IfType = NET_IFTYPE_ETHERNET,
+    },
+    .End = {
+      .Type = END_DEVICE_PATH_TYPE,
+      .SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE,
+      .Length = {
+        (UINT8)(sizeof (EFI_DEVICE_PATH_PROTOCOL)),
+        0
+      }
+    }
+  },
+  {
+    .BaseAddress = 0,
+    .MacAddress = { {0} },
+  }
+};
 
 STATIC
 VOID
@@ -80,11 +131,132 @@ Rp1BusRegisterDwc3Controllers (
 STATIC
 VOID
 EFIAPI
+Rp1BusRegisterGpioControllers (
+  IN RP1_BUS_DATA *Rp1Data
+  )
+{
+  EFI_STATUS                Status;
+  RP1_GPIO_DEVICE_PROTOCOL  *GpioDevProto;
+
+  GpioDevProto = AllocateZeroPool (sizeof (RP1_GPIO_DEVICE_PROTOCOL));
+  if (GpioDevProto == NULL) {
+    DEBUG ((DEBUG_ERROR, "RP1: Failed to allocate GPIO device protocol\n"));
+    return;
+  }
+
+  GpioDevProto->GpioBase = Rp1Data->PeripheralBase + RP1_IO_BANK0_BASE;
+  GpioDevProto->RioBase  = Rp1Data->PeripheralBase + RP1_SYS_RIO0_BASE;
+  GpioDevProto->PadsBase = Rp1Data->PeripheralBase + RP1_PADS_BANK0_BASE;
+
+  Status = gBS->InstallProtocolInterface (
+    &Rp1Data->ControllerHandle,
+    &gRp1GpioDeviceProtocolGuid,
+    EFI_NATIVE_INTERFACE,
+    GpioDevProto
+  );
+
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "RP1: Failed to install GPIO device protocol. Status=%r\n", Status));
+    FreePool (GpioDevProto);
+    return;
+  }
+}
+
+// TODO: maybe use firmware to query mac addr
+/*DEBUG ((DEBUG_INFO, "RP1: Ethernet device base address: 0x%lx\n", FullBase));
+DEBUG ((DEBUG_INFO, "RP1: mFwProtocol==null: %d\n", mFwProtocol == NULL));
+DEBUG ((DEBUG_INFO, "RP1: EthProto->MacAddress==null: %d\n", EthProto->MacAddress.Addr == NULL));
+Status = mFwProtocol->GetMacAddress (
+  EthProto->MacAddress.Addr
+);
+DEBUG ((DEBUG_INFO, "RP1: MAC address retrieved from firmware\n"));
+if (EFI_ERROR (Status)) {
+  DEBUG ((DEBUG_ERROR, "RP1: Failed to retrieve MAC address. Status=%r\n", Status));
+  FreePool (EthProto);
+  return;
+}*/
+
+STATIC
+VOID
+EFIAPI
+Rp1BusRegisterEthernetController (
+  IN RP1_BUS_DATA *Rp1Data
+  )
+{
+  EFI_STATUS  Status;
+  EFI_HANDLE  Handle;
+  
+  DEBUG ((DEBUG_INFO, "RP1: Registering Ethernet controller\n"));
+  // TODO: posibility of querying the offset from the fdt
+  mRp1EthDevice.PlatformDevice.BaseAddress = Rp1Data->PeripheralBase + RP1_ETH_BASE;
+
+  // Get MAC address from FDT
+  Status = GetEthernetMacAddress (
+    mRp1EthDevice.PlatformDevice.MacAddress.Addr
+  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_ERROR, "RP1: Failed to retrieve MAC address. Status=%r\n", Status));
+    return;
+  }
+  
+  DEBUG ((DEBUG_INFO, "RP1 MACB: MAC address: %02x:%02x:%02x:%02x:%02x:%02x\n",
+    mRp1EthDevice.PlatformDevice.MacAddress.Addr[0],
+    mRp1EthDevice.PlatformDevice.MacAddress.Addr[1],
+    mRp1EthDevice.PlatformDevice.MacAddress.Addr[2],
+    mRp1EthDevice.PlatformDevice.MacAddress.Addr[3],
+    mRp1EthDevice.PlatformDevice.MacAddress.Addr[4],
+    mRp1EthDevice.PlatformDevice.MacAddress.Addr[5]
+  ));
+
+  CopyMem (
+    &mRp1EthDevice.DevicePath.MacAddrP.MacAddress,
+    mRp1EthDevice.PlatformDevice.MacAddress.Addr,
+    NET_ETHER_ADDR_LEN
+  );
+
+  Handle = NULL;
+  Status = gBS->InstallMultipleProtocolInterfaces (
+    &Handle,
+    &gEfiDevicePathProtocolGuid, &mRp1EthDevice.DevicePath,
+    &gRp1EthernetPlatformDeviceProtocolGuid, &mRp1EthDevice.PlatformDevice,
+    NULL
+  );
+  ASSERT_EFI_ERROR (Status);
+
+  // Does crash RpiPlatformDxe
+  // Establish parent/child relationship (to help with unload/cleanup)
+  /*Status = gBS->OpenProtocol (
+    Rp1Data->ControllerHandle,
+    &gRp1BusProtocolGuid,
+    (VOID **)&Rp1Data->Rp1Bus,
+    Rp1Data->DriverBinding->DriverBindingHandle,
+    Handle,
+    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
+  );
+  if (EFI_ERROR (Status)) {
+    DEBUG ((DEBUG_WARN, "RP1: Failed to mark Ethernet as child. Status=%r\n", Status));
+
+    gBS->UninstallMultipleProtocolInterfaces (
+      Handle,
+      &gEfiDevicePathProtocolGuid,
+      &mRp1EthDevice.DevicePath,
+      &gRp1EthernetPlatformDeviceProtocolGuid,
+      &mRp1EthDevice.PlatformDevice,
+      NULL
+    );
+  }*/
+}
+
+STATIC
+VOID
+EFIAPI
 Rp1BusRegisterDevices (
   IN RP1_BUS_DATA  *Rp1Data
   )
 {
   Rp1BusRegisterDwc3Controllers (Rp1Data);
+  Rp1BusRegisterGpioControllers (Rp1Data);
+  Rp1BusRegisterEthernetController (Rp1Data);
 }
 
 STATIC
@@ -102,6 +274,24 @@ Rp1BusEnableInterrupts (
     Rp1Data->PeripheralBase + RP1_PCIE_REG_SET + RP1_PCIE_MSIX_CFG (RP1_INT_USBHOST1_0),
     RP1_PCIE_MSIX_CFG_ENABLE
     );
+ 
+  MmioWrite32 (
+    Rp1Data->PeripheralBase + RP1_PCIE_REG_SET + RP1_PCIE_MSIX_CFG (RP1_INT_IO_BANK0),
+    RP1_PCIE_MSIX_CFG_ENABLE
+  );
+  MmioWrite32 (
+    Rp1Data->PeripheralBase + RP1_PCIE_REG_SET + RP1_PCIE_MSIX_CFG (RP1_INT_IO_BANK1),
+    RP1_PCIE_MSIX_CFG_ENABLE
+  );
+  MmioWrite32 (
+    Rp1Data->PeripheralBase + RP1_PCIE_REG_SET + RP1_PCIE_MSIX_CFG (RP1_INT_IO_BANK2),
+    RP1_PCIE_MSIX_CFG_ENABLE
+  );
+
+  MmioWrite32 (
+    Rp1Data->PeripheralBase + RP1_PCIE_REG_SET + RP1_PCIE_MSIX_CFG (RP1_INT_ETH),
+    RP1_PCIE_MSIX_CFG_ENABLE
+  );
 }
 
 STATIC
@@ -184,6 +374,13 @@ Rp1BusDriverBindingStart (
   UINT64                             Supports;
   RP1_BUS_DATA                       *Rp1Data;
   EFI_ACPI_ADDRESS_SPACE_DESCRIPTOR  *PeripheralDesc;
+
+  Status = gBS->LocateProtocol (
+    &gRaspberryPiFirmwareProtocolGuid,
+    NULL,
+    (VOID **)&mFwProtocol
+  );
+  ASSERT_EFI_ERROR (Status);
 
   Rp1Data = NULL;
 

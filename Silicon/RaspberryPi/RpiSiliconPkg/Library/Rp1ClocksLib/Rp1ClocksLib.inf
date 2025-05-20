@@ -1,0 +1,30 @@
+#/** @file
+#
+#  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x0001001A
+  BASE_NAME                      = Rp1ClocksLib
+  FILE_GUID                      = 473305de-3504-4efb-b223-65b845e08ac0
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = Rp1ClocksLib
+
+[Sources]
+  Rp1ClocksLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+  Silicon/RaspberryPi/RpiSiliconPkg/RpiSiliconPkg.dec
+
+[LibraryClasses]
+  DebugLib
+  IoLib
+  BaseLib
+  UefiLib
+  TimerLib

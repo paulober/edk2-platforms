@@ -1,0 +1,331 @@
+/** @file
+ *
+ *  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
+ *
+ *  SPDX-License-Identifier: BSD-2-Clause-Patent
+ *
+ **/
+
+#ifndef __RP1_CLOCKS_LIB_H__
+#define __RP1_CLOCKS_LIB_H__
+
+#include <Uefi.h>
+
+#define RP1_PLL_SYS_CORE		0
+#define RP1_PLL_AUDIO_CORE		1
+#define RP1_PLL_VIDEO_CORE		2
+
+#define RP1_PLL_SYS			3
+#define RP1_PLL_AUDIO			4
+#define RP1_PLL_VIDEO			5
+
+#define RP1_PLL_SYS_PRI_PH		6
+#define RP1_PLL_SYS_SEC_PH		7
+#define RP1_PLL_AUDIO_PRI_PH		8
+
+#define RP1_PLL_SYS_SEC			9
+#define RP1_PLL_AUDIO_SEC		10
+#define RP1_PLL_VIDEO_SEC		11
+
+#define RP1_CLK_SYS			12
+#define RP1_CLK_SLOW_SYS		13
+#define RP1_CLK_DMA			14
+#define RP1_CLK_UART			15
+#define RP1_CLK_ETH			16
+#define RP1_CLK_PWM0			17
+#define RP1_CLK_PWM1			18
+#define RP1_CLK_AUDIO_IN		19
+#define RP1_CLK_AUDIO_OUT		20
+#define RP1_CLK_I2S			21
+#define RP1_CLK_MIPI0_CFG		22
+#define RP1_CLK_MIPI1_CFG		23
+#define RP1_CLK_PCIE_AUX		24
+#define RP1_CLK_USBH0_MICROFRAME	25
+#define RP1_CLK_USBH1_MICROFRAME	26
+#define RP1_CLK_USBH0_SUSPEND		27
+#define RP1_CLK_USBH1_SUSPEND		28
+#define RP1_CLK_ETH_TSU			29
+#define RP1_CLK_ADC			30
+#define RP1_CLK_SDIO_TIMER		31
+#define RP1_CLK_SDIO_ALT_SRC		32
+#define RP1_CLK_GP0			33
+#define RP1_CLK_GP1			34
+#define RP1_CLK_GP2			35
+#define RP1_CLK_GP3			36
+#define RP1_CLK_GP4			37
+#define RP1_CLK_GP5			38
+#define RP1_CLK_VEC			39
+#define RP1_CLK_DPI			40
+#define RP1_CLK_MIPI0_DPI		41
+#define RP1_CLK_MIPI1_DPI		42
+
+#define PLL_SYS_CS			0x08000
+#define PLL_SYS_PWR			0x08004
+#define PLL_SYS_FBDIV_INT		0x08008
+#define PLL_SYS_FBDIV_FRAC		0x0800c
+#define PLL_SYS_PRIM			0x08010
+#define PLL_SYS_SEC			0x08014
+
+#define PLL_AUDIO_CS			0x0c000
+#define PLL_AUDIO_PWR			0x0c004
+#define PLL_AUDIO_FBDIV_INT		0x0c008
+#define PLL_AUDIO_FBDIV_FRAC		0x0c00c
+#define PLL_AUDIO_PRIM			0x0c010
+#define PLL_AUDIO_SEC			0x0c014
+#define PLL_AUDIO_TERN			0x0c018
+
+#define PLL_VIDEO_CS			0x10000
+#define PLL_VIDEO_PWR			0x10004
+#define PLL_VIDEO_FBDIV_INT		0x10008
+#define PLL_VIDEO_FBDIV_FRAC		0x1000c
+#define PLL_VIDEO_PRIM			0x10010
+#define PLL_VIDEO_SEC			0x10014
+
+#define GPCLK_OE_CTRL			0x00000
+
+#define CLK_SYS_CTRL			0x00014
+#define CLK_SYS_DIV_INT			0x00018
+#define CLK_SYS_SEL			0x00020
+
+#define CLK_SLOW_SYS_CTRL		0x00024
+#define CLK_SLOW_SYS_DIV_INT		0x00028
+#define CLK_SLOW_SYS_SEL		0x00030
+
+#define CLK_DMA_CTRL			0x00044
+#define CLK_DMA_DIV_INT			0x00048
+#define CLK_DMA_SEL			0x00050
+
+#define CLK_UART_CTRL			0x00054
+#define CLK_UART_DIV_INT		0x00058
+#define CLK_UART_SEL			0x00060
+
+#define CLK_ETH_CTRL			0x00064
+#define CLK_ETH_DIV_INT			0x00068
+#define CLK_ETH_SEL			0x00070
+
+#define CLK_PWM0_CTRL			0x00074
+#define CLK_PWM0_DIV_INT		0x00078
+#define CLK_PWM0_DIV_FRAC		0x0007c
+#define CLK_PWM0_SEL			0x00080
+
+#define CLK_PWM1_CTRL			0x00084
+#define CLK_PWM1_DIV_INT		0x00088
+#define CLK_PWM1_DIV_FRAC		0x0008c
+#define CLK_PWM1_SEL			0x00090
+
+#define CLK_AUDIO_IN_CTRL		0x00094
+#define CLK_AUDIO_IN_DIV_INT		0x00098
+#define CLK_AUDIO_IN_SEL		0x000a0
+
+#define CLK_AUDIO_OUT_CTRL		0x000a4
+#define CLK_AUDIO_OUT_DIV_INT		0x000a8
+#define CLK_AUDIO_OUT_SEL		0x000b0
+
+#define CLK_I2S_CTRL			0x000b4
+#define CLK_I2S_DIV_INT			0x000b8
+#define CLK_I2S_SEL			0x000c0
+
+#define CLK_MIPI0_CFG_CTRL		0x000c4
+#define CLK_MIPI0_CFG_DIV_INT		0x000c8
+#define CLK_MIPI0_CFG_SEL		0x000d0
+
+#define CLK_MIPI1_CFG_CTRL		0x000d4
+#define CLK_MIPI1_CFG_DIV_INT		0x000d8
+#define CLK_MIPI1_CFG_SEL		0x000e0
+
+#define CLK_PCIE_AUX_CTRL		0x000e4
+#define CLK_PCIE_AUX_DIV_INT		0x000e8
+#define CLK_PCIE_AUX_SEL		0x000f0
+
+#define CLK_USBH0_MICROFRAME_CTRL	0x000f4
+#define CLK_USBH0_MICROFRAME_DIV_INT	0x000f8
+#define CLK_USBH0_MICROFRAME_SEL	0x00100
+
+#define CLK_USBH1_MICROFRAME_CTRL	0x00104
+#define CLK_USBH1_MICROFRAME_DIV_INT	0x00108
+#define CLK_USBH1_MICROFRAME_SEL	0x00110
+
+#define CLK_USBH0_SUSPEND_CTRL		0x00114
+#define CLK_USBH0_SUSPEND_DIV_INT	0x00118
+#define CLK_USBH0_SUSPEND_SEL		0x00120
+
+#define CLK_USBH1_SUSPEND_CTRL		0x00124
+#define CLK_USBH1_SUSPEND_DIV_INT	0x00128
+#define CLK_USBH1_SUSPEND_SEL		0x00130
+
+#define CLK_ETH_TSU_CTRL		0x00134
+#define CLK_ETH_TSU_DIV_INT		0x00138
+#define CLK_ETH_TSU_SEL			0x00140
+
+#define CLK_ADC_CTRL			0x00144
+#define CLK_ADC_DIV_INT			0x00148
+#define CLK_ADC_SEL			0x00150
+
+#define CLK_SDIO_TIMER_CTRL		0x00154
+#define CLK_SDIO_TIMER_DIV_INT		0x00158
+#define CLK_SDIO_TIMER_SEL		0x00160
+
+#define CLK_SDIO_ALT_SRC_CTRL		0x00164
+#define CLK_SDIO_ALT_SRC_DIV_INT	0x00168
+#define CLK_SDIO_ALT_SRC_SEL		0x00170
+
+#define CLK_GP0_CTRL			0x00174
+#define CLK_GP0_DIV_INT			0x00178
+#define CLK_GP0_DIV_FRAC		0x0017c
+#define CLK_GP0_SEL			0x00180
+
+#define CLK_GP1_CTRL			0x00184
+#define CLK_GP1_DIV_INT			0x00188
+#define CLK_GP1_DIV_FRAC		0x0018c
+#define CLK_GP1_SEL			0x00190
+
+#define CLK_GP2_CTRL			0x00194
+#define CLK_GP2_DIV_INT			0x00198
+#define CLK_GP2_DIV_FRAC		0x0019c
+#define CLK_GP2_SEL			0x001a0
+
+#define CLK_GP3_CTRL			0x001a4
+#define CLK_GP3_DIV_INT			0x001a8
+#define CLK_GP3_DIV_FRAC		0x001ac
+#define CLK_GP3_SEL			0x001b0
+
+#define CLK_GP4_CTRL			0x001b4
+#define CLK_GP4_DIV_INT			0x001b8
+#define CLK_GP4_DIV_FRAC		0x001bc
+#define CLK_GP4_SEL			0x001c0
+
+#define CLK_GP5_CTRL			0x001c4
+#define CLK_GP5_DIV_INT			0x001c8
+#define CLK_GP5_DIV_FRAC		0x001cc
+#define CLK_GP5_SEL			0x001d0
+
+#define CLK_SYS_RESUS_CTRL		0x0020c
+
+#define CLK_SLOW_SYS_RESUS_CTRL		0x00214
+
+#define FC0_REF_KHZ			0x0021c
+#define FC0_MIN_KHZ			0x00220
+#define FC0_MAX_KHZ			0x00224
+#define FC0_DELAY			0x00228
+#define FC0_INTERVAL	    0x0022c
+#define FC0_SRC				0x00230
+#define FC0_STATUS			0x00234
+#define FC0_RESULT			0x00238
+#define FC_SIZE				0x20
+#define FC_COUNT			8
+#define FC_NUM(idx, off)		((idx) * 32 + (off))
+
+#define AUX_SEL				1
+
+#define VIDEO_CLOCKS_OFFSET		0x4000
+#define VIDEO_CLK_VEC_CTRL		(VIDEO_CLOCKS_OFFSET + 0x0000)
+#define VIDEO_CLK_VEC_DIV_INT		(VIDEO_CLOCKS_OFFSET + 0x0004)
+#define VIDEO_CLK_VEC_SEL		(VIDEO_CLOCKS_OFFSET + 0x000c)
+#define VIDEO_CLK_DPI_CTRL		(VIDEO_CLOCKS_OFFSET + 0x0010)
+#define VIDEO_CLK_DPI_DIV_INT		(VIDEO_CLOCKS_OFFSET + 0x0014)
+#define VIDEO_CLK_DPI_SEL		(VIDEO_CLOCKS_OFFSET + 0x001c)
+#define VIDEO_CLK_MIPI0_DPI_CTRL	(VIDEO_CLOCKS_OFFSET + 0x0020)
+#define VIDEO_CLK_MIPI0_DPI_DIV_INT	(VIDEO_CLOCKS_OFFSET + 0x0024)
+#define VIDEO_CLK_MIPI0_DPI_DIV_FRAC	(VIDEO_CLOCKS_OFFSET + 0x0028)
+#define VIDEO_CLK_MIPI0_DPI_SEL		(VIDEO_CLOCKS_OFFSET + 0x002c)
+#define VIDEO_CLK_MIPI1_DPI_CTRL	(VIDEO_CLOCKS_OFFSET + 0x0030)
+#define VIDEO_CLK_MIPI1_DPI_DIV_INT	(VIDEO_CLOCKS_OFFSET + 0x0034)
+#define VIDEO_CLK_MIPI1_DPI_DIV_FRAC	(VIDEO_CLOCKS_OFFSET + 0x0038)
+#define VIDEO_CLK_MIPI1_DPI_SEL		(VIDEO_CLOCKS_OFFSET + 0x003c)
+
+#define DIV_INT_8BIT_MAX		0x000000ffu /* max divide for most clocks */
+#define DIV_INT_16BIT_MAX		0x0000ffffu /* max divide for GPx, PWM */
+#define DIV_INT_24BIT_MAX               0x00ffffffu /* max divide for CLK_SYS */
+
+#ifndef BIT
+#define BIT(n) (1U << (n))
+#endif
+
+#define FC0_STATUS_DONE			BIT(4)
+#define FC0_STATUS_RUNNING		BIT(8)
+#define FC0_RESULT_FRAC_SHIFT		5
+
+#define PLL_PRIM_DIV1_SHIFT		16
+#define PLL_PRIM_DIV1_MASK		0x00070000
+#define PLL_PRIM_DIV2_SHIFT		12
+#define PLL_PRIM_DIV2_MASK		0x00007000
+
+#define PLL_SEC_DIV_SHIFT		8
+#define PLL_SEC_DIV_WIDTH		5
+#define PLL_SEC_DIV_MASK		0x00001f00
+
+#define PLL_CS_LOCK			BIT(31)
+#define PLL_CS_REFDIV_SHIFT		0
+
+#define PLL_PWR_PD			BIT(0)
+#define PLL_PWR_DACPD			BIT(1)
+#define PLL_PWR_DSMPD			BIT(2)
+#define PLL_PWR_POSTDIVPD		BIT(3)
+#define PLL_PWR_4PHASEPD		BIT(4)
+#define PLL_PWR_VCOPD			BIT(5)
+#define PLL_PWR_MASK			0x0000003f
+
+#define PLL_SEC_RST			BIT(16)
+#define PLL_SEC_IMPL			BIT(31)
+
+/* PLL phase output for both PRI and SEC */
+#define PLL_PH_EN			BIT(4)
+#define PLL_PH_PHASE_SHIFT		0
+
+#define RP1_PLL_PHASE_0			0
+#define RP1_PLL_PHASE_90		1
+#define RP1_PLL_PHASE_180		2
+#define RP1_PLL_PHASE_270		3
+
+/* Clock fields for all clocks */
+#define CLK_CTRL_ENABLE			BIT(11)
+#define CLK_CTRL_AUXSRC_MASK		0x000003e0
+#define CLK_CTRL_AUXSRC_SHIFT		5
+#define CLK_CTRL_SRC_SHIFT		0
+#define CLK_DIV_FRAC_BITS		16
+
+#define KHz				1000
+#define MHz				(KHz * KHz)
+#define LOCK_TIMEOUT_NS			100000000
+#define FC_TIMEOUT_NS			10000000
+
+// TODO: maybe dynamic reading from pll or set in global pcd
+#define RP1_CLK_SYS_RATE_HZ		200000000U
+#define RP1_ETH_PARENT_RATE_HZ	RP1_CLK_SYS_RATE_HZ
+
+EFI_STATUS
+EFIAPI
+Rp1ClockEnable (
+  IN EFI_PHYSICAL_ADDRESS PeripheralBase,
+  IN UINT32 ClockId
+  );
+
+EFI_STATUS
+EFIAPI
+Rp1IsClockEnabled (
+    IN EFI_PHYSICAL_ADDRESS PeripheralBase,
+    IN UINT32 ClockId, 
+    OUT BOOLEAN *Enabled);
+
+EFI_STATUS
+EFIAPI
+Rp1EthGetClockRate (
+	IN  EFI_PHYSICAL_ADDRESS PeripheralBase,
+	OUT UINT64               *RateHz
+	);
+
+EFI_STATUS
+EFIAPI
+Rp1SysGetClockRate (
+  IN  EFI_PHYSICAL_ADDRESS PeripheralBase,
+  OUT UINT64               *RateHz
+  );
+
+EFI_STATUS
+EFIAPI
+Rp1EthSetClockRate (
+	IN EFI_PHYSICAL_ADDRESS PeripheralBase,
+	IN UINT32               DesiredRateHz
+	);
+
+#endif /* __RP1_CLOCKS_LIB_H__ */

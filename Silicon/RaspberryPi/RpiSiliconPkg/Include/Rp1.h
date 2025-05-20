@@ -1,5 +1,6 @@
 /** @file
  *
+ *  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
  *  Copyright (c) 2023-2024, Mario Bălănică <mariobalanica02@gmail.com>
  *
  *  SPDX-License-Identifier: BSD-2-Clause-Patent
@@ -108,6 +109,14 @@
 #define RP1_EXAC_BASE                               0x00400000
 
 #define RP1_USBHOST_SIZE                            0x00100000
+#define RP1_ETH_SIZE                                0x00004000
+
+//
+// GPIO defines
+//
+#define RP1_GPIO_REGION_SIZE                        0x0000C000
+#define RP1_GPIO_COUNT                              54
+#define RP1_GPIO_BANKS_COUNT                        3
 
 //
 // Local MSI-X vectors

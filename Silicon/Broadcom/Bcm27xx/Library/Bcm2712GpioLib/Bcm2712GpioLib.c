@@ -236,8 +236,6 @@ GpioGetFunction (
   BCM2712_PINCTRL_REGISTERS   *Regs;
   UINT32                      Value = BCM2712_GPIO_ALT_COUNT;
 
-  DEBUG ((DEBUG_INFO, "GpioGetFunction: Type %d Pin %d\n", Type, Pin));
-
   InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return Value);
 
@@ -261,8 +259,6 @@ GpioSetFunction (
 {
   BCM2712_GPIO_CONTROLLER     *Controller;
   BCM2712_PINCTRL_REGISTERS   *Regs;
-
-  DEBUG((DEBUG_INFO, "GpioSetFunction: Type %d Pin %d Function %d\n", Type, Pin, Function));
 
   InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);
@@ -288,8 +284,6 @@ GpioGetPull (
   BCM2712_PINCTRL_REGISTERS   *Regs;
   UINT32                      Value = BCM2712_GPIO_PIN_PULL_NONE;
 
-  DEBUG ((DEBUG_INFO, "GpioGetPull: Type %d Pin %d\n", Type, Pin));
-
   InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return Value);
 
@@ -313,8 +307,6 @@ GpioSetPull (
 {
   BCM2712_GPIO_CONTROLLER     *Controller;
   BCM2712_PINCTRL_REGISTERS   *Regs;
-
-  DEBUG ((DEBUG_INFO, "GpioSetPull: Type %d Pin %d Pull %d\n", Type, Pin, Pull));
 
   InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);
@@ -345,8 +337,6 @@ GpioRead (
   EFI_PHYSICAL_ADDRESS        BankReg;
   UINT32                      Value = FALSE;
 
-  DEBUG ((DEBUG_INFO, "GpioRead: Type %d Pin %d\n", Type, Pin));
-
   InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return Value);
 
@@ -368,8 +358,6 @@ GpioWrite (
 {
   BCM2712_GPIO_CONTROLLER     *Controller;
   EFI_PHYSICAL_ADDRESS        BankReg;
-
-  DEBUG ((DEBUG_INFO, "GpioWrite: Type %d Pin %d Value %d\n", Type, Pin, Value));
 
   InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);
@@ -394,8 +382,6 @@ GpioGetDirection (
   BCM2712_GPIO_CONTROLLER     *Controller;
   EFI_PHYSICAL_ADDRESS        BankReg;
   UINT32                      Value = BCM2712_GPIO_PIN_OUTPUT;
-
-  DEBUG ((DEBUG_INFO, "GpioGetDirection: Type %d Pin %d\n", Type, Pin));
 
   InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return Value);
@@ -422,8 +408,6 @@ GpioSetDirection (
 {
   BCM2712_GPIO_CONTROLLER     *Controller;
   EFI_PHYSICAL_ADDRESS        BankReg;
-
-  DEBUG ((DEBUG_INFO, "GpioSetDirection: Type %d Pin %d Direction %d\n", Type, Pin, Direction));
 
   InitializeGpioIfNeeded ();
   GPIOLIB_ASSERT_COMMON_PARAMS (Type, Pin, return);

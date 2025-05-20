@@ -1,0 +1,66 @@
+#/** @file
+#
+#  Copyright (c) 2025, Paul Oberosler <paul@paulober.dev>
+#
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+#
+#**/
+
+[Defines]
+  INF_VERSION                    = 0x0001001A
+  BASE_NAME                      = Rp1EthernetDxe
+  FILE_GUID                      = 2fa5d334-06e9-4230-ab0a-1b4217a4bc9a
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = Rp1EthernetDxeEntryPoint
+  UNLOAD_IMAGE                   = Rp1EthernetDxeUnloadImage
+
+[Sources]
+  AdapterInfo.c
+  ComponentName.c
+  Rp1EthernetDxe.c
+  MacbUtil.c
+  SimpleNetwork.c
+
+[Packages]
+  EmbeddedPkg/EmbeddedPkg.dec
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  NetworkPkg/NetworkPkg.dec
+  Platform/RaspberryPi/RaspberryPi.dec
+  Silicon/Broadcom/Bcm27xx/Bcm27xx.dec
+  Silicon/RaspberryPi/RpiSiliconPkg/RpiSiliconPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  Bcm2712GpioLib
+  CacheMaintenanceLib
+  DebugLib
+  DmaLib
+  MemoryAllocationLib
+  TimerLib
+  NetLib
+  Rp1ClocksLib
+  PcdLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+
+[Protocols]
+  gRp1EthernetPlatformDeviceProtocolGuid    ## TO_START
+  gEfiDevicePathProtocolGuid                ## BY_START
+  gEfiSimpleNetworkProtocolGuid             ## BY_START
+  gRp1GpioProtocolGuid                      ## PRODUCES
+  gRaspberryPiFirmwareProtocolGuid          ## CONSUMES
+
+[Guids]
+  gEfiAdapterInfoMediaStateGuid
+  gEfiEventExitBootServicesGuid
+
+[Depex]
+  gRp1GpioProtocolGuid AND gRaspberryPiFirmwareProtocolGuid
+
+[FixedPcd]
+  gEmbeddedTokenSpaceGuid.PcdDmaDeviceOffset
+  gEmbeddedTokenSpaceGuid.PcdDmaDeviceLimit
