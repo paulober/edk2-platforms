@@ -8,6 +8,9 @@
  **/
 
 #include <Rp1.h>
+#include <IndustryStandard/Bcm2712.h>
+
+#define RP1_PCIE_RC_DUMMY (BCM2712_BRCMSTB_PCIE2_BASE + 0xC0)
 
 #define RP1_QWORDMEMORY_BUF(Index)                              \
   QWordMemory (ResourceConsumer,,                               \
@@ -68,32 +71,42 @@ Device (GPIO)
   Name (_UID, 0x0)
   // Name (_CCA, 0x0) already inherited from the parent device (RP1)
 
-  Method (_CRS, 0, Serialized)
+  Method (_CRS, 0x0, Serialized)
   {
     Name (RBUF, ResourceTemplate ()
     {
       RP1_QWORDMEMORY_BUF (00)
       RP1_QWORDMEMORY_BUF (01)
       RP1_QWORDMEMORY_BUF (02)
+      RP1_QWORDMEMORY_BUF (03)
 
-      RP1_INTERRUPT_BUF (03)
+      RP1_INTERRUPT_BUF (04)
     })
 
     RP1_QWORDMEMORY_SET (00, RP1_IO_BANK0_BASE, RP1_GPIO_REGION_SIZE)
     RP1_QWORDMEMORY_SET (01, RP1_SYS_RIO0_BASE, RP1_GPIO_REGION_SIZE)
     RP1_QWORDMEMORY_SET (02, RP1_PADS_BANK0_BASE, RP1_GPIO_REGION_SIZE)
 
+    // Define Qword fields for the 4th memory resource (RB03)
+    CreateQwordField (RBUF, RB03._MIN, MI03)
+    CreateQwordField (RBUF, RB03._MAX, MA03)
+    CreateQwordField (RBUF, RB03._LEN, LE03)
+    // Set up a 4-byte MMIO region pointing to the PCIe RC dummy register
+    LE03 = 4
+    MI03 = RP1_PCIE_RC_DUMMY
+    MA03 = MI03 + LE03 - 1
+
     // Only GSI261 because ACPI has no built-in support for MSI-X vector indexing
-    RP1_INTERRUPT_SET (03)
+    RP1_INTERRUPT_SET (04)
 
     Return (RBUF)
   }
 
   // No _STA => 0xF (always on) assumed by default
   // but to be explicit, we can add it here:
-  Method (_STA)
+  Method (_STA, 0x0, Serialized)
   {
-    Return (0xF) // always present and functional
+    Return (0xf) // always present and functional
   }
 
   // Device-Specific Data for Linux compatibility
